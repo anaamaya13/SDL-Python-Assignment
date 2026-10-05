@@ -6,7 +6,6 @@ from functions_ajuste import *
 from functions_own import *
 import sys 
 
-#dir_path = r'C:\Users\AnaAm\spacelab/'
 
 obs = pd.read_csv(
     'spectrum.txt',
@@ -19,7 +18,7 @@ obs.columns = obs.columns.str.strip()
 wave_ang = obs.iloc[:, 0]
 flux_adu = obs.iloc[:, 1]
 
-red = 0.0
+red = 0.0 #reshift is 0
 wave = wave_ang / (1 + red)
 flux = flux_adu
 
@@ -36,9 +35,9 @@ flambda = flux
 wl1, wl2 = 6670, 6680
 wl3, wl4 = 6698, 6705
 
-flux_nocont, lam_cont, flux_cont, poly_cont = ajuste_continuo (wl1, wl2, wl3, wl4, lam_um, flambda)
+flux_nocont, lam_cont, flux_cont, poly_cont = ajuste_continuo (wl1, wl2, wl3, wl4, lam_um, flambda) #we use the function ajuste_continuo to get it 
 
-resid_cont = flux_cont - poly_cont(lam_cont)
+resid_cont = flux_cont - poly_cont(lam_cont) #residuals
 noise = np.std(resid_cont)
 
 #GRAPHICS
@@ -118,7 +117,7 @@ line_n_fit = models.Gaussian1D(
 )
 line_n_fit_err = assign_errors(curfit_err)
 
-# PHYSICAL PARAMETERS CALCULO (FWHM, VELOCITY AND FLUX)
+# PHYSICAL PARAMETERS CALCULus (FWHM, VELOCITY AND FLUX)
 # FWHM in velocity(km/s)
 FWHMr_line_n, FWHMr_line_n_err = calc_gaussian_fwhm(
     line_n_fit, velocity=True, Errpars=line_n_fit_err
@@ -127,7 +126,7 @@ FWHMr_line_n, FWHMr_line_n_err = calc_gaussian_fwhm(
 fwhm_corr = np.sqrt(np.maximum(0, FWHMr_line_n**2 - anchura_ins**2))
 print(f'FWHM_n (corrected) = {fwhm_corr:.2f} +/- {FWHMr_line_n_err:.2f} km/s')
 
-# Velocity respecto a wave_rest
+# Velocity with respect to the wave_rest
 vel_line_n, vel_line_n_err = calc_vel(
     line_n_fit, Errpars=line_n_fit_err, wave=wave_rest
 )
